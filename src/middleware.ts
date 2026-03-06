@@ -9,7 +9,12 @@ export default auth((req) => {
     nextUrl.pathname.startsWith("/dashboard") ||
     nextUrl.pathname.startsWith("/tasks") ||
     nextUrl.pathname.startsWith("/profile") ||
-    nextUrl.pathname.startsWith("/settings");
+    nextUrl.pathname.startsWith("/settings") ||
+    nextUrl.pathname.startsWith("/wallet") ||
+    nextUrl.pathname.startsWith("/referrals") ||
+    nextUrl.pathname.startsWith("/activate") ||
+    nextUrl.pathname.startsWith("/withdraw") ||
+    nextUrl.pathname.startsWith("/admin");
 
   if (isAuthRoute && isLoggedIn) {
     return Response.redirect(new URL("/dashboard", nextUrl));
@@ -30,6 +35,11 @@ export const config = {
     "/tasks/:path*",
     "/profile/:path*",
     "/settings/:path*",
+    "/wallet/:path*",
+    "/referrals/:path*",
+    "/activate/:path*",
+    "/withdraw/:path*",
+    "/admin/:path*",
     "/auth/:path*",
   ],
 };

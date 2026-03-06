@@ -1,4 +1,5 @@
 import { getDashboardMetrics } from "@/actions/dashboard";
+import { getWalletData } from "@/actions/wallet";
 import {
   Card,
   CardContent,
@@ -7,7 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { DashboardBarChart, DashboardPieChart } from "@/components/dashboard/dashboard-charts";
-import { CheckSquare, Users, TrendingUp, ListTodo } from "lucide-react";
+import { CheckSquare, Users, TrendingUp, ListTodo, WalletIcon } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/utils";
@@ -20,7 +21,10 @@ const STATUS_COLORS: Record<string, string> = {
 };
 
 export default async function DashboardPage() {
-  const metrics = await getDashboardMetrics();
+  const [metrics, walletData] = await Promise.all([
+    getDashboardMetrics(),
+    getWalletData(),
+  ]);
 
   if (!metrics) {
     return (
@@ -53,7 +57,7 @@ export default async function DashboardPage() {
         </p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Tasks</CardTitle>
@@ -102,6 +106,22 @@ export default async function DashboardPage() {
             <p className="text-xs text-muted-foreground">
               Total users
             </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Wallet</CardTitle>
+            <WalletIcon className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              KES {Number(walletData?.user?.walletBalance ?? 0).toFixed(2)}
+            </div>
+            <Link href="/wallet">
+              <p className="text-xs text-primary hover:underline cursor-pointer">
+                {walletData?.user?.isActive ? "Manage wallet →" : "Activate account →"}
+              </p>
+            </Link>
           </CardContent>
         </Card>
       </div>

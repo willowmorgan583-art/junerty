@@ -8,21 +8,33 @@ import {
   User,
   Settings,
   LogOut,
+  Wallet,
+  Users,
+  ShieldCheck,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 
-const navItems = [
+const baseNavItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/wallet", label: "Wallet", icon: Wallet },
+  { href: "/referrals", label: "Referrals", icon: Users },
   { href: "/tasks", label: "Tasks", icon: CheckSquare },
   { href: "/profile", label: "Profile", icon: User },
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 
-export function AppSidebar() {
+const adminNavItem = { href: "/admin", label: "Admin", icon: ShieldCheck };
+
+interface AppSidebarProps {
+  isAdmin?: boolean;
+}
+
+export function AppSidebar({ isAdmin = false }: AppSidebarProps) {
   const pathname = usePathname();
+  const navItems = isAdmin ? [...baseNavItems, adminNavItem] : baseNavItems;
 
   return (
     <aside className="flex h-screen w-64 flex-col border-r border-border bg-card">
