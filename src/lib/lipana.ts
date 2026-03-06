@@ -59,7 +59,8 @@ export async function initiateSTKPush(params: STKPushParams): Promise<LipanaResp
     }),
   });
   if (!res.ok) {
-    throw new Error(`Lipana STK push failed with status ${res.status}`);
+    const errBody = await res.json().catch(() => ({})) as { message?: string };
+    throw new Error(`Lipana STK push failed: ${errBody.message ?? res.statusText}`);
   }
   return res.json() as Promise<LipanaResponse>;
 }
@@ -83,7 +84,8 @@ export async function initiateWithdrawal(params: WithdrawParams): Promise<Lipana
     }),
   });
   if (!res.ok) {
-    throw new Error(`Lipana withdrawal failed with status ${res.status}`);
+    const errBody = await res.json().catch(() => ({})) as { message?: string };
+    throw new Error(`Lipana withdrawal failed: ${errBody.message ?? res.statusText}`);
   }
   return res.json() as Promise<LipanaResponse>;
 }

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
+import { randomBytes } from "crypto";
 import { prisma } from "@/lib/prisma";
 
 export async function POST(req: Request) {
@@ -42,7 +43,7 @@ export async function POST(req: Request) {
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
-    const referralCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+    const referralCode = randomBytes(4).toString("hex").toUpperCase();
 
     await prisma.user.create({
       data: {

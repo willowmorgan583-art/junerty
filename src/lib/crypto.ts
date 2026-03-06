@@ -5,12 +5,14 @@ const KEY_LENGTH = 32;
 
 function getKey(): Buffer {
   const key = process.env.ENCRYPTION_KEY ?? "";
-  if (!key || key.length < 1) {
+  if (!key) {
     throw new Error("ENCRYPTION_KEY environment variable is not set");
   }
-  const buf = Buffer.alloc(KEY_LENGTH);
-  Buffer.from(key).copy(buf);
-  return buf;
+  const keyBytes = Buffer.from(key, "utf8");
+  if (keyBytes.length !== KEY_LENGTH) {
+    throw new Error(`ENCRYPTION_KEY must be exactly ${KEY_LENGTH} bytes (got ${keyBytes.length})`);
+  }
+  return keyBytes;
 }
 
 export function encrypt(text: string): string {
