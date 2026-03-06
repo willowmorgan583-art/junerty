@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+  <defs>
+    <linearGradient id="logoGrad" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#6366f1"/>
+      <stop offset="50%" stop-color="#8b5cf6"/>
+      <stop offset="100%" stop-color="#a855f7"/>
+    </linearGradient>
+  </defs>
+  <rect width="48" height="48" rx="12" fill="url(#logoGrad)"/>
+  <path d="M14 16L24 12L34 16V28L24 36L14 28V16Z" stroke="white" stroke-width="2" stroke-linejoin="round" fill="none"/>
+  <path d="M24 12V36" stroke="white" stroke-width="1.5" stroke-dasharray="2 2" opacity="0.5"/>
+  <path d="M14 16L34 28" stroke="white" stroke-width="1.5" stroke-dasharray="2 2" opacity="0.5"/>
+  <path d="M34 16L14 28" stroke="white" stroke-width="1.5" stroke-dasharray="2 2" opacity="0.5"/>
+  <circle cx="24" cy="24" r="4" fill="white" opacity="0.9"/>
+  <circle cx="24" cy="12" r="2" fill="white"/>
+  <circle cx="34" cy="16" r="2" fill="white"/>
+  <circle cx="34" cy="28" r="2" fill="white"/>
+  <circle cx="24" cy="36" r="2" fill="white"/>
+  <circle cx="14" cy="28" r="2" fill="white"/>
+  <circle cx="14" cy="16" r="2" fill="white"/>
+</svg>

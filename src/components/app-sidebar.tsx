@@ -17,6 +17,7 @@ import { signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
+import { BrandLogo } from "@/components/brand-logo";
 
 const baseNavItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -56,10 +57,7 @@ export function AppSidebar({ isAdmin = false, open, onClose }: AppSidebarProps) 
       >
         <div className="flex h-16 items-center justify-between border-b border-border px-6">
           <Link href="/dashboard" className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-              <CheckSquare className="h-4 w-4 text-primary-foreground" />
-            </div>
-            <span className="font-bold text-lg tracking-tight">Junerty</span>
+            <BrandLogo size="sm" />
           </Link>
           <Button
             variant="ghost"

@@ -2,6 +2,11 @@ import Link from "next/link";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { BrandLogo } from "@/components/brand-logo";
+import { HeroSlider } from "@/components/hero-slider";
+import { TestimonialsSlider } from "@/components/testimonials-slider";
+import { WhatsappButton } from "@/components/whatsapp-button";
+import { getWhatsappNumber } from "@/actions/admin";
 import {
   ArrowRight,
   CheckSquare,
@@ -22,16 +27,15 @@ export default async function LandingPage() {
   const session = await auth();
   if (session) redirect("/dashboard");
 
+  const whatsappNumber = await getWhatsappNumber();
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 border-b border-border/40 bg-background/80 backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
           <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-              <CheckSquare className="h-4 w-4 text-primary-foreground" />
-            </div>
-            <span className="font-bold text-xl tracking-tight">Junerty</span>
+            <BrandLogo size="md" />
           </Link>
           <nav className="hidden md:flex items-center gap-8">
             <a href="#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Features</a>
@@ -62,8 +66,11 @@ export default async function LandingPage() {
               <span>Trusted by 2,000+ teams worldwide</span>
             </div>
             <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
-              The task platform
-              <span className="block mt-1 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+              <span className="brand-3d">SYNTHGRAPHIX</span>
+              <span className="block mt-2 text-3xl sm:text-4xl md:text-5xl font-bold text-foreground/90">
+                The task platform
+              </span>
+              <span className="block mt-1 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent text-2xl sm:text-3xl md:text-4xl">
                 built for results
               </span>
             </h1>
@@ -99,6 +106,13 @@ export default async function LandingPage() {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Hero Slider */}
+      <section className="py-12 sm:py-16">
+        <div className="mx-auto max-w-4xl px-6">
+          <HeroSlider />
         </div>
       </section>
 
@@ -190,7 +204,7 @@ export default async function LandingPage() {
         </div>
       </section>
 
-      {/* Testimonials */}
+      {/* Testimonials Slider */}
       <section id="testimonials" className="py-24 sm:py-32">
         <div className="mx-auto max-w-7xl px-6">
           <div className="mx-auto max-w-2xl text-center">
@@ -199,32 +213,8 @@ export default async function LandingPage() {
               Loved by teams everywhere
             </h2>
           </div>
-          <div className="mt-16 grid gap-8 md:grid-cols-3">
-            {[
-              { name: "Sarah K.", role: "Project Manager", quote: "Junerty transformed how our team handles tasks. The Kanban board is incredibly intuitive, and the analytics help us make better decisions.", stars: 5 },
-              { name: "Michael O.", role: "Team Lead", quote: "The wallet and referral system is genius. My team stays motivated, and the M-Pesa integration makes everything seamless.", stars: 5 },
-              { name: "Grace W.", role: "Freelancer", quote: "Finally, a task management tool that pays you back! The referral bonuses and clean interface make Junerty my daily driver.", stars: 5 },
-            ].map((testimonial) => (
-              <div key={testimonial.name} className="rounded-2xl border border-border bg-card p-8 shadow-sm">
-                <div className="flex gap-1 mb-4">
-                  {Array.from({ length: testimonial.stars }).map((_, i) => (
-                    <Star key={i} className="h-4 w-4 text-yellow-500 fill-yellow-500" />
-                  ))}
-                </div>
-                <p className="text-sm leading-relaxed text-muted-foreground italic">
-                  &ldquo;{testimonial.quote}&rdquo;
-                </p>
-                <div className="mt-6 flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
-                    {testimonial.name.charAt(0)}
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold">{testimonial.name}</p>
-                    <p className="text-xs text-muted-foreground">{testimonial.role}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
+          <div className="mt-16 mx-auto max-w-2xl">
+            <TestimonialsSlider />
           </div>
         </div>
       </section>
@@ -239,7 +229,7 @@ export default async function LandingPage() {
             Ready to supercharge your productivity?
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            Join thousands of teams already using Junerty to manage tasks, collaborate, and grow.
+            Join thousands of teams already using <span className="brand-3d font-bold">SYNTHGRAPHIX</span> to manage tasks, collaborate, and grow.
           </p>
           <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Link href="/auth/register">
@@ -265,12 +255,7 @@ export default async function LandingPage() {
         <div className="mx-auto max-w-7xl px-6">
           <div className="grid gap-8 md:grid-cols-4">
             <div className="md:col-span-2">
-              <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-                  <CheckSquare className="h-4 w-4 text-primary-foreground" />
-                </div>
-                <span className="font-bold text-lg">Junerty</span>
-              </div>
+              <BrandLogo size="md" />
               <p className="mt-4 max-w-sm text-sm text-muted-foreground leading-relaxed">
                 The modern task management platform that helps teams work smarter,
                 stay organized, and achieve more together.
@@ -294,10 +279,13 @@ export default async function LandingPage() {
             </div>
           </div>
           <div className="mt-12 border-t border-border pt-8 text-center text-sm text-muted-foreground">
-            &copy; {new Date().getFullYear()} Junerty. All rights reserved. Built with Next.js, Prisma, and Tailwind CSS.
+            &copy; {new Date().getFullYear()} <span className="brand-3d font-bold">SYNTHGRAPHIX</span>. All rights reserved. Built with Next.js, Prisma, and Tailwind CSS.
           </div>
         </div>
       </footer>
+
+      {/* WhatsApp Floating Button */}
+      <WhatsappButton phoneNumber={whatsappNumber} />
     </div>
   );
 }

@@ -14,6 +14,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { CheckSquare, Loader2, ArrowLeft, Mail } from "lucide-react";
+import { BrandLogo } from "@/components/brand-logo";
 
 export default function ForgotPasswordPage() {
   const [submitted, setSubmitted] = useState(false);
@@ -80,12 +81,7 @@ export default function ForgotPasswordPage() {
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1 text-center">
           <div className="flex justify-center mb-4">
-            <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-                <CheckSquare className="h-4 w-4 text-primary-foreground" />
-              </div>
-              <span className="font-bold text-xl">Junerty</span>
-            </div>
+            <BrandLogo size="md" />
           </div>
           <CardTitle className="text-2xl font-bold">Forgot password?</CardTitle>
           <CardDescription>

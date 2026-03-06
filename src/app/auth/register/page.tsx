@@ -16,6 +16,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { CheckSquare, Loader2, Gift } from "lucide-react";
+import { BrandLogo } from "@/components/brand-logo";
 
 function RegisterForm() {
   const router = useRouter();
@@ -75,10 +76,7 @@ function RegisterForm() {
       <div className="hidden lg:flex lg:w-1/2 items-center justify-center bg-primary p-12">
         <div className="max-w-md text-primary-foreground">
           <div className="flex items-center gap-2 mb-8">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-foreground/20">
-              <CheckSquare className="h-5 w-5" />
-            </div>
-            <span className="font-bold text-2xl">Junerty</span>
+            <BrandLogo size="lg" textClassName="text-primary-foreground" />
           </div>
           <h2 className="text-3xl font-bold leading-tight">
             Start managing tasks like a pro
@@ -102,12 +100,7 @@ function RegisterForm() {
         <Card className="w-full max-w-md border-0 shadow-none sm:border sm:shadow-sm">
           <CardHeader className="space-y-1 text-center">
             <div className="flex justify-center lg:hidden mb-4">
-              <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-                  <CheckSquare className="h-4 w-4 text-primary-foreground" />
-                </div>
-                <span className="font-bold text-xl">Junerty</span>
-              </div>
+              <BrandLogo size="md" />
             </div>
             <CardTitle className="text-2xl font-bold">Create an account</CardTitle>
             <CardDescription>

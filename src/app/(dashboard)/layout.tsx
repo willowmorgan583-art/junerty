@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 import { SidebarServerWrapper } from "@/components/sidebar-server-wrapper";
 import { AppHeader } from "@/components/app-header";
 import { SidebarProvider } from "@/components/sidebar-context";
+import { WhatsappButton } from "@/components/whatsapp-button";
+import { getWhatsappNumber } from "@/actions/admin";
 
 export default async function DashboardLayout({
   children,
@@ -11,6 +13,8 @@ export default async function DashboardLayout({
 }) {
   const session = await auth();
   if (!session) redirect("/auth/login");
+
+  const whatsappNumber = await getWhatsappNumber();
 
   return (
     <SidebarProvider>
@@ -21,6 +25,7 @@ export default async function DashboardLayout({
           <main className="flex-1 overflow-y-auto p-4 sm:p-6">{children}</main>
         </div>
       </div>
+      <WhatsappButton phoneNumber={whatsappNumber} />
     </SidebarProvider>
   );
 }

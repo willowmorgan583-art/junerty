@@ -3,7 +3,7 @@ import { Providers } from "@/components/providers";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Junerty | Modern Task Management Platform",
+  title: "SYNTHGRAPHIX | Modern Task Management Platform",
   description: "A production-ready task management platform with analytics, wallet system, and team collaboration",
 };
 

@@ -123,3 +123,55 @@ html.dark {
   outline: 2px solid var(--ring);
   outline-offset: 2px;
 }
+
+/* 3D Brand Text */
+.brand-3d {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 40%, #a855f7 70%, #c084fc 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: none;
+  filter: drop-shadow(0 1px 1px rgba(99, 102, 241, 0.3))
+          drop-shadow(0 2px 4px rgba(139, 92, 246, 0.2));
+  letter-spacing: 0.04em;
+}
+
+.dark .brand-3d {
+  background: linear-gradient(135deg, #818cf8 0%, #a78bfa 40%, #c084fc 70%, #e879f9 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 1px 2px rgba(129, 140, 248, 0.4))
+          drop-shadow(0 2px 6px rgba(167, 139, 250, 0.3));
+}
+
+/* Hero Slider */
+@keyframes slide {
+  0%, 30% { opacity: 1; transform: translateX(0); }
+  33%, 63% { opacity: 0; transform: translateX(-20px); }
+  66%, 96% { opacity: 0; transform: translateX(20px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
+/* WhatsApp floating button */
+.whatsapp-float {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #25d366;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+}
+
+.whatsapp-float:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.5);
+}

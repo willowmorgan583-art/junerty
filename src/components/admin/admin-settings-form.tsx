@@ -11,6 +11,7 @@ interface AdminSettingsFormProps {
     activationFeeAmount: number;
     referralBonusAmount: number;
     minWithdrawalAmount: number;
+    whatsappNumber: string;
   };
 }
 
@@ -30,6 +31,7 @@ export function AdminSettingsForm({ initialValues }: AdminSettingsFormProps) {
         activationFeeAmount: values.activationFeeAmount,
         referralBonusAmount: values.referralBonusAmount,
         minWithdrawalAmount: values.minWithdrawalAmount,
+        whatsappNumber: values.whatsappNumber,
         ...(lipana.apiKey && lipana.secretKey && lipana.merchantId ? {
           lipanaApiKey: lipana.apiKey,
           lipanaSecretKey: lipana.secretKey,
@@ -89,6 +91,22 @@ export function AdminSettingsForm({ initialValues }: AdminSettingsFormProps) {
               disabled={loading}
             />
           </div>
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">WhatsApp Support</h3>
+        <p className="text-xs text-muted-foreground">Set the WhatsApp number shown on the floating support button (include country code, e.g. 254712345678).</p>
+        <div className="space-y-2">
+          <Label htmlFor="whatsappNumber">WhatsApp Number</Label>
+          <Input
+            id="whatsappNumber"
+            type="tel"
+            placeholder="254712345678"
+            value={values.whatsappNumber}
+            onChange={(e) => setValues((v) => ({ ...v, whatsappNumber: e.target.value }))}
+            disabled={loading}
+          />
         </div>
       </div>
 

@@ -31,6 +31,13 @@ export async function getGlobalSettings() {
   return prisma.globalSettings.findFirst();
 }
 
+export async function getWhatsappNumber(): Promise<string | null> {
+  const settings = await prisma.globalSettings.findFirst({
+    select: { whatsappNumber: true },
+  });
+  return settings?.whatsappNumber ?? null;
+}
+
 export async function updateGlobalSettings(data: {
   activationFeeAmount?: number;
   referralBonusAmount?: number;
@@ -38,6 +45,7 @@ export async function updateGlobalSettings(data: {
   lipanaApiKey?: string;
   lipanaSecretKey?: string;
   lipanaMerchantId?: string;
+  whatsappNumber?: string;
 }) {
   await requireAdmin();
 
@@ -58,6 +66,7 @@ export async function updateGlobalSettings(data: {
   if (data.referralBonusAmount !== undefined) updateData.referralBonusAmount = data.referralBonusAmount;
   if (data.minWithdrawalAmount !== undefined) updateData.minWithdrawalAmount = data.minWithdrawalAmount;
   if (lipanaCredentials) updateData.lipanaCredentials = lipanaCredentials;
+  if (data.whatsappNumber !== undefined) updateData.whatsappNumber = data.whatsappNumber;
 
   if (existing) {
     await prisma.globalSettings.update({ where: { id: existing.id }, data: updateData });
