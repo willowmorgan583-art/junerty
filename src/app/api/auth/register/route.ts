@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 
 export async function POST(req: Request) {
   try {
-    const { name, email, password } = await req.json();
+    const { name, email, password, referralCode: refCode } = await req.json();
 
     if (!email || !password) {
       return NextResponse.json(
@@ -31,13 +31,26 @@ export async function POST(req: Request) {
       );
     }
 
+    // Find referrer if referral code provided
+    let referredById: string | undefined;
+    if (refCode) {
+      const referrer = await prisma.user.findUnique({
+        where: { referralCode: refCode },
+        select: { id: true },
+      });
+      if (referrer) referredById = referrer.id;
+    }
+
     const hashedPassword = await bcrypt.hash(password, 12);
+    const referralCode = Math.random().toString(36).substring(2, 8).toUpperCase();
 
     await prisma.user.create({
       data: {
         name: name || null,
         email,
         password: hashedPassword,
+        referralCode,
+        ...(referredById && { referredById }),
       },
     });
 
