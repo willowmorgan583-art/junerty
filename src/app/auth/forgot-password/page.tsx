@@ -13,6 +13,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { CheckSquare, Loader2, ArrowLeft, Mail } from "lucide-react";
 
 export default function ForgotPasswordPage() {
   const [submitted, setSubmitted] = useState(false);
@@ -50,15 +51,21 @@ export default function ForgotPasswordPage() {
       <div className="flex min-h-screen items-center justify-center bg-background p-4">
         <Card className="w-full max-w-md">
           <CardHeader className="space-y-1 text-center">
+            <div className="flex justify-center mb-4">
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-green-500/10">
+                <Mail className="h-7 w-7 text-green-600" />
+              </div>
+            </div>
             <CardTitle className="text-2xl font-bold">Check your email</CardTitle>
             <CardDescription>
               If an account exists with that email, we&apos;ve sent password
               reset instructions.
             </CardDescription>
           </CardHeader>
-          <CardFooter>
+          <CardFooter className="flex flex-col gap-3">
             <Link href="/auth/login" className="w-full">
-              <Button variant="outline" className="w-full">
+              <Button variant="outline" className="w-full gap-2">
+                <ArrowLeft className="h-4 w-4" />
                 Back to sign in
               </Button>
             </Link>
@@ -72,6 +79,14 @@ export default function ForgotPasswordPage() {
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1 text-center">
+          <div className="flex justify-center mb-4">
+            <div className="flex items-center gap-2">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
+                <CheckSquare className="h-4 w-4 text-primary-foreground" />
+              </div>
+              <span className="font-bold text-xl">Junerty</span>
+            </div>
+          </div>
           <CardTitle className="text-2xl font-bold">Forgot password?</CardTitle>
           <CardDescription>
             Enter your email and we&apos;ll send you reset instructions
@@ -93,17 +108,26 @@ export default function ForgotPasswordPage() {
                 placeholder="you@example.com"
                 required
                 disabled={loading}
+                className="h-11"
               />
             </div>
           </CardContent>
           <CardFooter className="flex flex-col gap-4">
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Sending..." : "Send reset link"}
+            <Button type="submit" className="w-full h-11" disabled={loading}>
+              {loading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Sending...
+                </>
+              ) : (
+                "Send reset link"
+              )}
             </Button>
             <Link
               href="/auth/login"
-              className="text-center text-sm text-muted-foreground hover:text-primary"
+              className="text-center text-sm text-muted-foreground hover:text-primary transition-colors flex items-center justify-center gap-1"
             >
+              <ArrowLeft className="h-3 w-3" />
               Back to sign in
             </Link>
           </CardFooter>
