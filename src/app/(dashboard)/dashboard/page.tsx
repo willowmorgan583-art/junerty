@@ -124,7 +124,9 @@ export default async function DashboardPage() {
               need attention
             </p>
             <p className="text-xs text-red-600 dark:text-red-300">
-              {urgentTasks.map((t) => t.title).join(", ")}
+              {urgentTasks.length <= 3
+                ? urgentTasks.map((t) => t.title).join(", ")
+                : `${urgentTasks.slice(0, 3).map((t) => t.title).join(", ")} and ${urgentTasks.length - 3} more`}
             </p>
           </div>
         </div>

@@ -4,6 +4,7 @@ import { useState, useCallback, useEffect } from "react";
 import { Menu, Search, Bell, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useSidebar } from "@/components/sidebar-context";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,6 +19,7 @@ import type { Notification } from "@prisma/client";
 import { cn } from "@/lib/utils";
 
 export function AppHeader() {
+  const { toggle: toggleSidebar } = useSidebar();
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -44,11 +46,6 @@ export function AppHeader() {
   }, []);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
-
-  function toggleSidebar() {
-    const btn = document.getElementById("sidebar-toggle-hidden");
-    if (btn) btn.click();
-  }
 
   return (
     <header className="flex h-16 items-center justify-between gap-4 border-b border-border bg-background/95 backdrop-blur-sm px-4 sm:px-6">

@@ -47,7 +47,7 @@ export function ProfileEditForm({ currentName }: ProfileEditFormProps) {
           />
         </div>
       </div>
-      <Button type="submit" disabled={loading || name === currentName}>
+      <Button type="submit" disabled={loading || name.trim() === currentName}>
         {loading ? "Saving..." : "Update Profile"}
       </Button>
     </form>
