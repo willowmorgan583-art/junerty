@@ -40,7 +40,7 @@ export function AppSidebar({ isAdmin = false }: AppSidebarProps) {
     <aside className="flex h-screen w-64 flex-col border-r border-border bg-card">
       <div className="flex h-16 items-center gap-2 border-b border-border px-6">
         <Link href="/dashboard" className="font-semibold text-lg">
-          Platform
+          Junerty
         </Link>
       </div>
       <nav className="flex-1 space-y-1 p-4">

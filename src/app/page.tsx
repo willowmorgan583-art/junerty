@@ -13,7 +13,7 @@ export default async function LandingPage() {
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 border-b border-border/40 bg-background/80 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
-          <span className="font-bold text-xl">Platform</span>
+          <span className="font-bold text-xl">Junerty</span>
           <div className="flex items-center gap-4">
             <Link href="/auth/login">
               <Button variant="ghost">Sign in</Button>
@@ -106,7 +106,7 @@ export default async function LandingPage() {
         <div className="mx-auto max-w-4xl px-6 text-center">
           <h2 className="text-3xl font-bold">Ready to get started?</h2>
           <p className="mt-4 text-muted-foreground">
-            Join thousands of teams already using Platform.
+            Join thousands of teams already using Junerty.
           </p>
           <Link href="/auth/register" className="mt-8 inline-block">
             <Button size="lg" className="gap-2">
@@ -120,7 +120,7 @@ export default async function LandingPage() {
       {/* Footer */}
       <footer className="border-t border-border py-8">
         <div className="mx-auto max-w-6xl px-6 text-center text-sm text-muted-foreground">
-          © {new Date().getFullYear()} Platform. Built with Next.js, Prisma, and
+          © {new Date().getFullYear()} Junerty. Built with Next.js, Prisma, and
           Tailwind.
         </div>
       </footer>
