@@ -1,16 +1,20 @@
-import { auth } from "@/auth";
-import { prisma } from "@/lib/prisma";
-import { AppSidebar } from "@/components/app-sidebar";
+"use client";
 
-export async function AppSidebarWrapper() {
-  const session = await auth();
-  let isAdmin = false;
-  if (session?.user?.id) {
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
-      select: { role: true },
-    });
-    isAdmin = user?.role === "ADMIN";
-  }
-  return <AppSidebar isAdmin={isAdmin} />;
+import { AppSidebar } from "@/components/app-sidebar";
+import { useSidebar } from "@/components/sidebar-context";
+
+interface AppSidebarWrapperClientProps {
+  isAdmin: boolean;
+}
+
+export function AppSidebarWrapperClient({ isAdmin }: AppSidebarWrapperClientProps) {
+  const { open, close } = useSidebar();
+
+  return (
+    <AppSidebar
+      isAdmin={isAdmin}
+      open={open}
+      onClose={close}
+    />
+  );
 }

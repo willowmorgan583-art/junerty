@@ -30,6 +30,7 @@ const adminNavItem = { href: "/admin", label: "Admin Panel", icon: ShieldCheck }
 
 interface AppSidebarProps {
   isAdmin?: boolean;
+  open?: boolean;
   onClose?: () => void;
 }
 
@@ -81,11 +82,24 @@ function NavGroup({
   );
 }
 
-export function AppSidebar({ isAdmin = false, onClose }: AppSidebarProps) {
+export function AppSidebar({ isAdmin = false, open = false, onClose }: AppSidebarProps) {
   const pathname = usePathname();
 
   return (
-    <aside className="flex h-screen w-64 flex-col border-r border-sidebar-border bg-sidebar">
+    <>
+      {/* Mobile backdrop */}
+      {open && (
+        <div
+          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm md:hidden"
+          onClick={onClose}
+        />
+      )}
+      <aside
+        className={cn(
+          "fixed inset-y-0 left-0 z-50 flex h-screen w-64 flex-col border-r border-sidebar-border bg-sidebar transition-transform duration-300 md:static md:translate-x-0",
+          open ? "translate-x-0" : "-translate-x-full"
+        )}
+      >
       {/* Logo */}
       <div className="flex h-16 items-center gap-2.5 border-b border-sidebar-border px-5">
         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-violet-500 to-indigo-600 shadow-lg shadow-violet-500/25">
@@ -131,5 +145,6 @@ export function AppSidebar({ isAdmin = false, onClose }: AppSidebarProps) {
         </p>
       </div>
     </aside>
+    </>
   );
 }

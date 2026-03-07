@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
-import { Search, Bell, Menu, User, Sun, Moon, X, Settings } from "lucide-react";
+import { Search, Bell, Menu, User, Sun, Moon, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -17,16 +17,16 @@ import Link from "next/link";
 import { getNotifications, markNotificationRead } from "@/actions/notifications";
 import type { Notification } from "@prisma/client";
 import { cn } from "@/lib/utils";
-import { AppSidebar } from "@/components/app-sidebar";
+import { useSidebar } from "@/components/sidebar-context";
 import { useTheme } from "@/components/theme-provider";
 
 export function AppHeader() {
   const { data: session } = useSession();
   const { theme, setTheme } = useTheme();
+  const { toggle: toggleSidebar } = useSidebar();
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const loadNotifications = useCallback(async () => {
     const data = await getNotifications();
@@ -63,7 +63,7 @@ export function AppHeader() {
             variant="ghost"
             size="icon"
             className="md:hidden h-9 w-9"
-            onClick={() => setMobileMenuOpen(true)}
+            onClick={toggleSidebar}
           >
             <Menu className="h-5 w-5" />
           </Button>
@@ -255,28 +255,6 @@ export function AppHeader() {
             <p className="mt-3 text-xs text-muted-foreground">
               Search for tasks, wallet transactions, or referrals
             </p>
-          </div>
-        </div>
-      )}
-
-      {/* Mobile sidebar overlay */}
-      {mobileMenuOpen && (
-        <div className="fixed inset-0 z-50 md:hidden">
-          <div
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-            onClick={() => setMobileMenuOpen(false)}
-          />
-          <div className="relative z-10 h-full w-64 shadow-2xl">
-            <button
-              className="absolute right-3 top-3 z-10 rounded-full bg-card p-1.5 text-muted-foreground hover:text-foreground"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              <X className="h-4 w-4" />
-            </button>
-            <AppSidebar
-              isAdmin={false}
-              onClose={() => setMobileMenuOpen(false)}
-            />
           </div>
         </div>
       )}
