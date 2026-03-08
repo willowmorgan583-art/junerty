@@ -423,42 +423,35 @@ export default async function LandingPage() {
       </section>
 
       {/* ── Footer ── */}
-      <footer className="border-t border-border/30 bg-muted/5 py-12 sm:py-16">
+      <footer className="border-t border-border/30 bg-muted/5 py-10">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            <div className="sm:col-span-2 lg:col-span-1">
+          <div className="space-y-6">
+            <div>
               <BrandLogo size={28} />
-              <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
-                The #1 digital earning platform in Kenya. Earn real money completing tasks and referring friends.
+              <p className="mt-2 text-sm text-muted-foreground">
+                The #1 digital earning platform in Kenya.
               </p>
             </div>
-            <div>
-              <h4 className="text-sm font-bold uppercase tracking-wider mb-4">Platform</h4>
-              <div className="space-y-2.5">
-                {["Tasks", "Wallet", "Referrals", "Withdraw"].map((l) => (
-                  <p key={l} className="text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer">{l}</p>
-                ))}
-              </div>
-            </div>
-            <div>
-              <h4 className="text-sm font-bold uppercase tracking-wider mb-4">Support</h4>
-              <div className="space-y-2.5">
-                {["WhatsApp", "FAQ", "Contact Us", "Help Center"].map((l) => (
-                  <p key={l} className="text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer">{l}</p>
-                ))}
-              </div>
-            </div>
-            <div>
-              <h4 className="text-sm font-bold uppercase tracking-wider mb-4">Legal</h4>
-              <div className="space-y-2.5">
-                {["Terms of Service", "Privacy Policy", "Cookie Policy"].map((l) => (
-                  <p key={l} className="text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer">{l}</p>
-                ))}
+
+            <div className="rounded-xl border border-border/30 bg-background/40 px-4 py-3">
+              <div className="grid gap-3 text-xs sm:grid-cols-3">
+                <div>
+                  <p className="mb-1 font-bold uppercase tracking-wider text-foreground/90">Platform</p>
+                  <p className="text-muted-foreground">Tasks · Wallet · Referrals · Withdraw</p>
+                </div>
+                <div>
+                  <p className="mb-1 font-bold uppercase tracking-wider text-foreground/90">Support</p>
+                  <p className="text-muted-foreground">WhatsApp · FAQ · Contact Us · Help Center</p>
+                </div>
+                <div>
+                  <p className="mb-1 font-bold uppercase tracking-wider text-foreground/90">Legal</p>
+                  <p className="text-muted-foreground">Terms of Service · Privacy Policy · Cookie Policy</p>
+                </div>
               </div>
             </div>
           </div>
 
-          <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-border/30 pt-8 sm:flex-row">
+          <div className="mt-6 flex flex-col items-center justify-between gap-3 border-t border-border/30 pt-6 sm:flex-row">
             <p className="text-xs text-muted-foreground">
               © {new Date().getFullYear()} SYNTHGRAPHIX. All rights reserved.
             </p>
