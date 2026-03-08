@@ -171,10 +171,10 @@ export function AppHeader() {
             <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
-                className="ml-1 flex h-9 items-center gap-2 rounded-lg px-2 hover:bg-accent/50"
+                className="ml-1 flex h-9 items-center gap-2 rounded-lg px-1.5 hover:bg-accent/50"
               >
-                <Avatar className="h-8 w-8 shrink-0 border border-primary/30">
-                  <AvatarFallback className="bg-gradient-to-br from-violet-500 to-indigo-600 text-xs font-bold text-white">
+                <Avatar className="h-7 w-7 shrink-0 border border-primary/30">
+                  <AvatarFallback className="bg-gradient-to-br from-violet-500 to-indigo-600 text-[10px] font-bold text-white">
                     {userInitials}
                   </AvatarFallback>
                 </Avatar>

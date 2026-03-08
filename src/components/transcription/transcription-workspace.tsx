@@ -237,7 +237,7 @@ function TranscriptionEditor({ taskId, rewardCoins, onSubmitted }: Transcription
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none p-6">
             <div className="text-center space-y-2 text-muted-foreground">
               <AlignLeft className="h-8 w-8 mx-auto opacity-40" />
-              <p className="text-sm">Listen to the media and type what you hear</p>
+              <p className="text-sm">Watch the video and describe what you see</p>
               <p className="text-xs">Write at least {minWords} words</p>
             </div>
           </div>

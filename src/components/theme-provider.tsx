@@ -75,7 +75,12 @@ export function ThemeProvider({
   const setTheme = React.useCallback(
     (newTheme: Theme) => {
       localStorage.setItem(storageKey, newTheme);
+      // Enable transitions briefly during theme switch
+      document.documentElement.classList.add("transitioning");
       setThemeState(newTheme);
+      setTimeout(() => {
+        document.documentElement.classList.remove("transitioning");
+      }, 200);
     },
     [storageKey]
   );

@@ -18,9 +18,7 @@ import {
   Play,
   Pause,
   RotateCcw,
-  Volume2,
-  VolumeX,
-  AlignLeft,
+  X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { submitTranscription } from "@/actions/transcription";
@@ -64,54 +62,53 @@ interface UnifiedTasksClientProps {
   submissions: Submission[];
 }
 
-// ─── Category Tabs ─────────────────────────────────────────────────────
-
 type Category = "videos" | "images";
 
-// ─── Video Player ──────────────────────────────────────────────────────
+// ─── Fullscreen Video Modal ────────────────────────────────────────────
 
-function formatTime(seconds: number): string {
-  const m = Math.floor(seconds / 60).toString().padStart(2, "0");
-  const s = Math.floor(seconds % 60).toString().padStart(2, "0");
-  return `${m}:${s}`;
-}
-
-function InlineVideoPlayer({
-  streamUrl,
-  title,
-  thumbnailUrl,
+function VideoModal({
+  task,
+  onClose,
+  onComplete,
 }: {
-  streamUrl: string;
-  title: string;
-  thumbnailUrl?: string | null;
+  task: MediaTask;
+  onClose: () => void;
+  onComplete: () => void;
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
   const [elapsed, setElapsed] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [text, setText] = useState("");
+  const [isPending, startTransition] = useTransition();
+  const [result, setResult] = useState<{ success: boolean; error?: string } | null>(null);
+  const wordCount = text.trim() === "" ? 0 : text.trim().split(/\s+/).length;
+
+  function fmt(s: number) {
+    return `${Math.floor(s / 60).toString().padStart(2, "0")}:${Math.floor(s % 60).toString().padStart(2, "0")}`;
+  }
 
   useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-    const onTime = () => setElapsed(video.currentTime);
-    const onDur = () => setDuration(video.duration || 0);
-    const onEnd = () => setIsPlaying(false);
-    const onPlay = () => setIsPlaying(true);
-    const onPause = () => setIsPlaying(false);
-    video.addEventListener("timeupdate", onTime);
-    video.addEventListener("durationchange", onDur);
-    video.addEventListener("ended", onEnd);
-    video.addEventListener("play", onPlay);
-    video.addEventListener("pause", onPause);
+    const v = videoRef.current;
+    if (!v) return;
+    const onT = () => setElapsed(v.currentTime);
+    const onD = () => setDuration(v.duration || 0);
+    const onE = () => setIsPlaying(false);
+    const onP = () => setIsPlaying(true);
+    const onPa = () => setIsPlaying(false);
+    v.addEventListener("timeupdate", onT);
+    v.addEventListener("durationchange", onD);
+    v.addEventListener("ended", onE);
+    v.addEventListener("play", onP);
+    v.addEventListener("pause", onPa);
     return () => {
-      video.removeEventListener("timeupdate", onTime);
-      video.removeEventListener("durationchange", onDur);
-      video.removeEventListener("ended", onEnd);
-      video.removeEventListener("play", onPlay);
-      video.removeEventListener("pause", onPause);
+      v.removeEventListener("timeupdate", onT);
+      v.removeEventListener("durationchange", onD);
+      v.removeEventListener("ended", onE);
+      v.removeEventListener("play", onP);
+      v.removeEventListener("pause", onPa);
     };
-  }, [streamUrl]);
+  }, []);
 
   const togglePlay = useCallback(() => {
     const v = videoRef.current;
@@ -125,182 +122,125 @@ function InlineVideoPlayer({
     if (v) v.currentTime = Math.max(0, v.currentTime - 5);
   }, []);
 
-  const toggleMute = useCallback(() => {
-    setIsMuted((m) => {
-      if (videoRef.current) videoRef.current.muted = !m;
-      return !m;
-    });
-  }, []);
-
   const handleSeek = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const val = Number(e.target.value);
     if (videoRef.current) videoRef.current.currentTime = val;
     setElapsed(val);
   }, []);
 
-  return (
-    <div className="space-y-2">
-      <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-zinc-900">
-        <video
-          ref={videoRef}
-          src={streamUrl}
-          poster={thumbnailUrl ?? undefined}
-          className="h-full w-full object-contain"
-          preload="metadata"
-          playsInline
-        />
-        {!isPlaying && (
-          <button
-            onClick={togglePlay}
-            className="absolute inset-0 flex items-center justify-center"
-          >
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm transition hover:bg-white/30">
-              <Play className="h-6 w-6 translate-x-0.5 text-white" />
-            </div>
-          </button>
-        )}
-        <div className="absolute bottom-2 right-2 rounded bg-black/60 px-1.5 py-0.5 text-[10px] font-mono text-white/80">
-          {formatTime(elapsed)} / {formatTime(duration)}
-        </div>
-        <div className="absolute top-2 left-2 right-12 truncate rounded bg-black/60 px-2 py-0.5 text-[10px] text-white/80">
-          {title}
-        </div>
-      </div>
-      <input
-        type="range"
-        min={0}
-        max={duration || 0}
-        step={0.1}
-        value={elapsed}
-        onChange={handleSeek}
-        className="h-1 w-full cursor-pointer appearance-none rounded-full bg-muted accent-primary"
-      />
-      <div className="flex items-center gap-1.5">
-        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={rewind}>
-          <RotateCcw className="h-3.5 w-3.5" />
-        </Button>
-        <Button size="icon" className="h-7 w-7" onClick={togglePlay}>
-          {isPlaying ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5 translate-x-px" />}
-        </Button>
-        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={toggleMute}>
-          {isMuted ? <VolumeX className="h-3.5 w-3.5" /> : <Volume2 className="h-3.5 w-3.5" />}
-        </Button>
-      </div>
-    </div>
-  );
-}
-
-// ─── Video Task Card ───────────────────────────────────────────────────
-
-function VideoTaskCard({
-  task,
-  onComplete,
-}: {
-  task: MediaTask;
-  onComplete: () => void;
-}) {
-  const [expanded, setExpanded] = useState(false);
-  const [text, setText] = useState("");
-  const [isPending, startTransition] = useTransition();
-  const [result, setResult] = useState<{ success: boolean; error?: string } | null>(null);
-  const wordCount = text.trim() === "" ? 0 : text.trim().split(/\s+/).length;
-
   const handleSubmit = () => {
     if (wordCount < 5) return;
     startTransition(async () => {
       const res = await submitTranscription(task.id, text);
       setResult(res);
-      if (res.success) setTimeout(onComplete, 1200);
+      if (res.success) setTimeout(() => { onComplete(); onClose(); }, 1200);
     });
   };
 
-  if (result?.success) {
-    return (
-      <Card className="overflow-hidden border-green-500/30">
-        <CardContent className="flex flex-col items-center gap-2 py-8">
-          <CheckCircle className="h-8 w-8 text-green-500" />
-          <p className="text-xs font-medium text-green-500">Submitted! +KES {task.rewardCoins} pending</p>
-        </CardContent>
-      </Card>
-    );
-  }
+  // Lock body scroll
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = ""; };
+  }, []);
 
   return (
-    <Card className="overflow-hidden transition-all hover:shadow-md">
-      <div
-        className="relative aspect-video bg-zinc-900 cursor-pointer"
-        onClick={() => !expanded && setExpanded(true)}
-      >
-        {!expanded ? (
-          <>
-            {task.thumbnailUrl ? (
-              <img src={task.thumbnailUrl} alt={task.title} className="h-full w-full object-cover" />
-            ) : (
-              <div className="flex h-full items-center justify-center">
-                <Video className="h-8 w-8 text-white/40" />
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+      <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl bg-card border border-border shadow-2xl">
+        {/* Close button */}
+        <button
+          onClick={onClose}
+          className="absolute top-3 right-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-black/50 text-white hover:bg-black/70"
+        >
+          <X className="h-4 w-4" />
+        </button>
+
+        {/* Video Player */}
+        <div className="relative aspect-video w-full bg-zinc-900 rounded-t-2xl overflow-hidden">
+          <video
+            ref={videoRef}
+            src={task.streamUrl}
+            poster={task.thumbnailUrl ?? undefined}
+            className="h-full w-full object-contain"
+            preload="metadata"
+            playsInline
+          />
+          {!isPlaying && (
+            <button onClick={togglePlay} className="absolute inset-0 flex items-center justify-center">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 transition">
+                <Play className="h-7 w-7 translate-x-0.5 text-white" />
               </div>
-            )}
-            <div className="absolute inset-0 flex items-center justify-center bg-black/20">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm">
-                <Play className="h-5 w-5 text-white translate-x-0.5" />
-              </div>
-            </div>
-          </>
-        ) : (
-          <InlineVideoPlayer streamUrl={task.streamUrl} title={task.title} thumbnailUrl={task.thumbnailUrl} />
-        )}
-        <span className="absolute top-2 right-2 flex items-center gap-1 rounded-full bg-black/60 px-2 py-0.5 text-[10px] font-medium text-white z-10">
-          <Coins className="h-3 w-3 text-yellow-400" /> KES {task.rewardCoins}
-        </span>
-        {task.category && (
-          <span className="absolute top-2 left-2 rounded-full bg-black/60 px-2 py-0.5 text-[10px] text-white z-10">
-            {task.category}
-          </span>
-        )}
-      </div>
-      <CardContent className="p-3 space-y-2">
-        <p className="text-sm font-medium truncate">{task.title}</p>
-        {!expanded ? (
-          <Button variant="outline" size="sm" className="w-full text-xs gap-1" onClick={() => setExpanded(true)}>
-            <Play className="h-3 w-3" /> Play & Transcribe
-          </Button>
-        ) : (
-          <div className="space-y-2">
-            <textarea
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              placeholder="Listen and type what you hear in the video..."
-              className="w-full min-h-[80px] rounded-lg border border-border bg-transparent p-2 text-xs outline-none focus:border-primary resize-none"
-              disabled={isPending}
-            />
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] text-muted-foreground">{wordCount} words (min 5)</span>
-              {result?.error && <span className="text-[10px] text-red-500">{result.error}</span>}
-            </div>
-            <Button size="sm" className="w-full gap-1 text-xs" disabled={wordCount < 5 || isPending} onClick={handleSubmit}>
-              {isPending ? (
-                <><Loader2 className="h-3 w-3 animate-spin" /> Submitting...</>
-              ) : (
-                <><Send className="h-3 w-3" /> Submit Transcription</>
-              )}
-            </Button>
+            </button>
+          )}
+          <div className="absolute bottom-2 right-2 rounded bg-black/60 px-2 py-0.5 text-xs font-mono text-white/80">
+            {fmt(elapsed)} / {fmt(duration)}
           </div>
-        )}
-      </CardContent>
-    </Card>
+          <span className="absolute top-3 right-12 flex items-center gap-1 rounded-full bg-black/60 px-2.5 py-1 text-xs font-medium text-white">
+            <Coins className="h-3.5 w-3.5 text-yellow-400" /> KES {task.rewardCoins}
+          </span>
+        </div>
+
+        {/* Controls */}
+        <div className="flex items-center gap-2 px-4 pt-3">
+          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={rewind}>
+            <RotateCcw className="h-4 w-4" />
+          </Button>
+          <Button size="icon" className="h-8 w-8" onClick={togglePlay}>
+            {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4 translate-x-px" />}
+          </Button>
+          <input
+            type="range" min={0} max={duration || 0} step={0.1} value={elapsed}
+            onChange={handleSeek}
+            className="flex-1 h-1.5 cursor-pointer appearance-none rounded-full bg-muted accent-primary"
+          />
+        </div>
+
+        {/* Submission form */}
+        <div className="p-4 space-y-3">
+          <h3 className="text-base font-semibold">{task.title}</h3>
+          {result?.success ? (
+            <div className="flex flex-col items-center gap-2 py-6">
+              <CheckCircle className="h-10 w-10 text-green-500" />
+              <p className="text-sm font-medium text-green-500">Submitted! +KES {task.rewardCoins} pending review</p>
+            </div>
+          ) : (
+            <>
+              <textarea
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                placeholder="Describe what you see in this video..."
+                className="w-full min-h-[100px] rounded-xl border border-border bg-transparent p-3 text-sm outline-none focus:border-primary resize-none"
+                disabled={isPending}
+              />
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-muted-foreground">{wordCount} words (min 5)</span>
+                {result?.error && <span className="text-xs text-red-500">{result.error}</span>}
+              </div>
+              <Button className="w-full gap-2" disabled={wordCount < 5 || isPending} onClick={handleSubmit}>
+                {isPending ? (
+                  <><Loader2 className="h-4 w-4 animate-spin" /> Submitting...</>
+                ) : (
+                  <><Send className="h-4 w-4" /> Submit Description</>
+                )}
+              </Button>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }
 
-// ─── Image Task Card ───────────────────────────────────────────────────
+// ─── Fullscreen Image Modal ────────────────────────────────────────────
 
-function ImageTaskCard({
+function ImageModal({
   task,
+  onClose,
   onComplete,
 }: {
   task: ImageTask;
+  onClose: () => void;
   onComplete: () => void;
 }) {
-  const [expanded, setExpanded] = useState(false);
   const [text, setText] = useState("");
   const [isPending, startTransition] = useTransition();
   const [result, setResult] = useState<{ success: boolean; error?: string } | null>(null);
@@ -311,68 +251,119 @@ function ImageTaskCard({
     startTransition(async () => {
       const res = await submitTranscription(task.id, text);
       setResult(res);
-      if (res.success) setTimeout(onComplete, 1200);
+      if (res.success) setTimeout(() => { onComplete(); onClose(); }, 1200);
     });
   };
 
-  if (result?.success) {
-    return (
-      <Card className="overflow-hidden border-green-500/30">
-        <CardContent className="flex flex-col items-center gap-2 py-8">
-          <CheckCircle className="h-8 w-8 text-green-500" />
-          <p className="text-xs font-medium text-green-500">Submitted! +KES {task.rewardCoins} pending</p>
-        </CardContent>
-      </Card>
-    );
-  }
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = ""; };
+  }, []);
 
   return (
-    <Card className="overflow-hidden transition-all hover:shadow-md">
-      <div className="relative aspect-video bg-zinc-900 cursor-pointer" onClick={() => setExpanded(!expanded)}>
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+      <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl bg-card border border-border shadow-2xl">
+        <button
+          onClick={onClose}
+          className="absolute top-3 right-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-black/50 text-white hover:bg-black/70"
+        >
+          <X className="h-4 w-4" />
+        </button>
+
+        {/* Large Image */}
+        <div className="relative w-full bg-zinc-900 rounded-t-2xl overflow-hidden">
+          {task.thumbnailUrl ? (
+            <img src={task.thumbnailUrl} alt={task.title} className="w-full object-contain max-h-[50vh]" />
+          ) : (
+            <div className="flex h-48 items-center justify-center">
+              <Image className="h-12 w-12 text-white/40" />
+            </div>
+          )}
+          <span className="absolute top-3 right-12 flex items-center gap-1 rounded-full bg-black/60 px-2.5 py-1 text-xs font-medium text-white">
+            <Coins className="h-3.5 w-3.5 text-yellow-400" /> KES {task.rewardCoins}
+          </span>
+        </div>
+
+        {/* Submission form */}
+        <div className="p-4 space-y-3">
+          <h3 className="text-base font-semibold">{task.title}</h3>
+          {result?.success ? (
+            <div className="flex flex-col items-center gap-2 py-6">
+              <CheckCircle className="h-10 w-10 text-green-500" />
+              <p className="text-sm font-medium text-green-500">Submitted! +KES {task.rewardCoins} pending review</p>
+            </div>
+          ) : (
+            <>
+              <textarea
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                placeholder="Describe what you see in this image in detail..."
+                className="w-full min-h-[100px] rounded-xl border border-border bg-transparent p-3 text-sm outline-none focus:border-primary resize-none"
+                disabled={isPending}
+              />
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-muted-foreground">{wordCount} words (min 3)</span>
+                {result?.error && <span className="text-xs text-red-500">{result.error}</span>}
+              </div>
+              <Button className="w-full gap-2" disabled={wordCount < 3 || isPending} onClick={handleSubmit}>
+                {isPending ? (
+                  <><Loader2 className="h-4 w-4 animate-spin" /> Submitting...</>
+                ) : (
+                  <><Send className="h-4 w-4" /> Submit Description</>
+                )}
+              </Button>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Thumbnail Cards (Grid) ────────────────────────────────────────────
+
+function VideoThumb({ task, onClick }: { task: MediaTask; onClick: () => void }) {
+  return (
+    <Card className="overflow-hidden cursor-pointer hover:shadow-md group" onClick={onClick}>
+      <div className="relative aspect-video bg-zinc-900">
         {task.thumbnailUrl ? (
-          <img src={task.thumbnailUrl} alt={task.title} className="h-full w-full object-cover" />
+          <img src={task.thumbnailUrl} alt={task.title} className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300" />
         ) : (
-          <div className="flex h-full items-center justify-center">
-            <Image className="h-8 w-8 text-white/40" />
-          </div>
+          <div className="flex h-full items-center justify-center"><Video className="h-8 w-8 text-white/40" /></div>
         )}
-        <span className="absolute top-2 right-2 flex items-center gap-1 rounded-full bg-black/60 px-2 py-0.5 text-[10px] font-medium text-white">
+        <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm">
+            <Play className="h-4 w-4 text-white translate-x-0.5" />
+          </div>
+        </div>
+        <span className="absolute top-1.5 right-1.5 flex items-center gap-1 rounded-full bg-black/60 px-1.5 py-0.5 text-[10px] font-medium text-white">
           <Coins className="h-3 w-3 text-yellow-400" /> KES {task.rewardCoins}
         </span>
-        {task.category && (
-          <span className="absolute top-2 left-2 rounded-full bg-black/60 px-2 py-0.5 text-[10px] text-white">
-            {task.category}
-          </span>
-        )}
       </div>
-      <CardContent className="p-3 space-y-2">
-        <p className="text-sm font-medium truncate">{task.title}</p>
-        {!expanded ? (
-          <Button variant="outline" size="sm" className="w-full text-xs gap-1" onClick={() => setExpanded(true)}>
-            <Image className="h-3 w-3" /> Describe Image
-          </Button>
+      <CardContent className="p-2.5">
+        <p className="text-xs font-medium truncate">{task.title}</p>
+        <p className="text-[10px] text-muted-foreground mt-0.5">Tap to describe</p>
+      </CardContent>
+    </Card>
+  );
+}
+
+function ImageThumb({ task, onClick }: { task: ImageTask; onClick: () => void }) {
+  return (
+    <Card className="overflow-hidden cursor-pointer hover:shadow-md group" onClick={onClick}>
+      <div className="relative aspect-video bg-zinc-900">
+        {task.thumbnailUrl ? (
+          <img src={task.thumbnailUrl} alt={task.title} className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300" />
         ) : (
-          <div className="space-y-2">
-            <textarea
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              placeholder="Describe what you see in this image..."
-              className="w-full min-h-[80px] rounded-lg border border-border bg-transparent p-2 text-xs outline-none focus:border-primary resize-none"
-              disabled={isPending}
-            />
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] text-muted-foreground">{wordCount} words (min 3)</span>
-              {result?.error && <span className="text-[10px] text-red-500">{result.error}</span>}
-            </div>
-            <Button size="sm" className="w-full gap-1 text-xs" disabled={wordCount < 3 || isPending} onClick={handleSubmit}>
-              {isPending ? (
-                <><Loader2 className="h-3 w-3 animate-spin" /> Submitting...</>
-              ) : (
-                <><Send className="h-3 w-3" /> Submit Description</>
-              )}
-            </Button>
-          </div>
+          <div className="flex h-full items-center justify-center"><Image className="h-8 w-8 text-white/40" /></div>
         )}
+        <span className="absolute top-1.5 right-1.5 flex items-center gap-1 rounded-full bg-black/60 px-1.5 py-0.5 text-[10px] font-medium text-white">
+          <Coins className="h-3 w-3 text-yellow-400" /> KES {task.rewardCoins}
+        </span>
+      </div>
+      <CardContent className="p-2.5">
+        <p className="text-xs font-medium truncate">{task.title}</p>
+        <p className="text-[10px] text-muted-foreground mt-0.5">Tap to describe</p>
       </CardContent>
     </Card>
   );
@@ -431,19 +422,20 @@ export function UnifiedTasksClient({
   const router = useRouter();
   const [tab, setTab] = useState<Category>("videos");
   const [count, setCount] = useState(todayCount);
+  const [selectedVideo, setSelectedVideo] = useState<MediaTask | null>(null);
+  const [selectedImage, setSelectedImage] = useState<ImageTask | null>(null);
+  const [completedIds, setCompletedIds] = useState<Set<string>>(new Set());
 
-  // For videos, we load multiple via router refresh
+  // Load all 10 video tasks
   const [allVideoTasks, setAllVideoTasks] = useState<MediaTask[]>(videoTask ? [videoTask] : []);
   const [loading, setLoading] = useState(false);
 
-  // Load all 10 video tasks
   useEffect(() => {
     if (allVideoTasks.length >= 10 || limitReached || noVideoTasks) return;
     setLoading(true);
     import("@/actions/transcription").then(async (mod) => {
       const tasks: MediaTask[] = [];
       const seen = new Set(allVideoTasks.map((t) => t.id));
-      // Fetch multiple tasks
       for (let i = 0; i < 12 && tasks.length < 10; i++) {
         try {
           const data = await mod.getNextTask();
@@ -468,12 +460,13 @@ export function UnifiedTasksClient({
     });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const handleComplete = () => {
+  const handleComplete = (taskId: string) => {
     setCount((c) => c + 1);
+    setCompletedIds((prev) => new Set(prev).add(taskId));
     setTimeout(() => router.refresh(), 500);
   };
 
-  // Daily limit reached
+  // Daily limit
   if (limitReached || count >= dailyLimit) {
     return (
       <div className="space-y-6">
@@ -492,9 +485,12 @@ export function UnifiedTasksClient({
     );
   }
 
+  const activeVideos = allVideoTasks.filter((t) => !completedIds.has(t.id));
+  const activeImages = imageTasks.filter((t) => !completedIds.has(t.id));
+
   return (
     <div className="space-y-4">
-      {/* Daily Progress Bar */}
+      {/* Daily Progress */}
       <div className="flex items-center justify-between rounded-xl border border-border bg-card px-4 py-3">
         <div className="flex items-center gap-2">
           <span className="text-sm font-medium">Daily Progress</span>
@@ -513,75 +509,90 @@ export function UnifiedTasksClient({
         <button
           onClick={() => setTab("videos")}
           className={cn(
-            "flex-1 flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition-all",
+            "flex-1 flex items-center justify-center gap-1.5 rounded-lg px-3 py-2.5 text-sm font-medium transition-all",
             tab === "videos"
               ? "bg-primary text-primary-foreground shadow-sm"
               : "text-muted-foreground hover:bg-accent hover:text-foreground"
           )}
         >
           <Video className="h-4 w-4" />
-          <span>Video Transcription</span>
-          <span className="ml-1 rounded-full bg-white/20 px-1.5 py-0.5 text-[10px]">KES 35-55</span>
+          <span className="hidden sm:inline">Video</span>
+          <span className="rounded-full bg-white/20 px-1.5 py-0.5 text-[10px]">KES 35-55</span>
         </button>
         <button
           onClick={() => setTab("images")}
           className={cn(
-            "flex-1 flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition-all",
+            "flex-1 flex items-center justify-center gap-1.5 rounded-lg px-3 py-2.5 text-sm font-medium transition-all",
             tab === "images"
               ? "bg-primary text-primary-foreground shadow-sm"
               : "text-muted-foreground hover:bg-accent hover:text-foreground"
           )}
         >
           <Image className="h-4 w-4" />
-          <span>Image Description</span>
-          <span className="ml-1 rounded-full bg-white/20 px-1.5 py-0.5 text-[10px]">KES 15-30</span>
+          <span className="hidden sm:inline">Image</span>
+          <span className="rounded-full bg-white/20 px-1.5 py-0.5 text-[10px]">KES 15-30</span>
         </button>
       </div>
 
-      {/* Content */}
+      {/* Tasks Grid */}
       {tab === "videos" ? (
-        loading && allVideoTasks.length === 0 ? (
+        loading && activeVideos.length === 0 ? (
           <div className="flex items-center justify-center py-16">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
           </div>
-        ) : noVideoTasks && allVideoTasks.length === 0 ? (
+        ) : noVideoTasks && activeVideos.length === 0 ? (
           <Card>
             <CardContent className="flex flex-col items-center gap-4 py-12">
               <AlertTriangle className="h-12 w-12 text-yellow-500" />
               <h2 className="text-lg font-bold">No Video Tasks Available</h2>
-              <p className="text-sm text-muted-foreground text-center max-w-md">
-                You&apos;ve completed all available video tasks. Try image tasks or check back later!
+              <p className="text-sm text-muted-foreground text-center">
+                Try image tasks or check back later!
               </p>
             </CardContent>
           </Card>
         ) : (
-          <div className="grid gap-4 grid-cols-2">
-            {allVideoTasks.map((task) => (
-              <VideoTaskCard key={task.id} task={task} onComplete={handleComplete} />
+          <div className="grid gap-3 grid-cols-2">
+            {activeVideos.map((task) => (
+              <VideoThumb key={task.id} task={task} onClick={() => setSelectedVideo(task)} />
             ))}
           </div>
         )
       ) : (
-        noImageTasks || imageTasks.length === 0 ? (
+        noImageTasks || activeImages.length === 0 ? (
           <Card>
             <CardContent className="flex flex-col items-center gap-4 py-12">
               <AlertTriangle className="h-12 w-12 text-yellow-500" />
               <h2 className="text-lg font-bold">No Image Tasks Available</h2>
-              <p className="text-sm text-muted-foreground text-center max-w-md">
-                You&apos;ve completed all available image tasks. Try video tasks or check back later!
+              <p className="text-sm text-muted-foreground text-center">
+                Try video tasks or check back later!
               </p>
             </CardContent>
           </Card>
         ) : (
-          <div className="grid gap-4 grid-cols-2">
-            {imageTasks.map((task) => (
-              <ImageTaskCard key={task.id} task={task} onComplete={handleComplete} />
+          <div className="grid gap-3 grid-cols-2">
+            {activeImages.map((task) => (
+              <ImageThumb key={task.id} task={task} onClick={() => setSelectedImage(task)} />
             ))}
           </div>
         )
       )}
 
-      {/* Submission History */}
+      {/* Modals */}
+      {selectedVideo && (
+        <VideoModal
+          task={selectedVideo}
+          onClose={() => setSelectedVideo(null)}
+          onComplete={() => handleComplete(selectedVideo.id)}
+        />
+      )}
+      {selectedImage && (
+        <ImageModal
+          task={selectedImage}
+          onClose={() => setSelectedImage(null)}
+          onComplete={() => handleComplete(selectedImage.id)}
+        />
+      )}
+
       <SubmissionHistory submissions={submissions} />
     </div>
   );

@@ -11,7 +11,7 @@ const SLIDES = [
   { src: "/slide-4.jpg", alt: "SYNTHGRAPHIX Slide 4" },
 ];
 
-const AUTO_PLAY_MS = 5000;
+const AUTO_PLAY_MS = 1000;
 
 export function DashboardSlider() {
   const [current, setCurrent] = useState(0);
