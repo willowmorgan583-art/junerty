@@ -3,8 +3,9 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { WithdrawForm } from "@/components/wallet/withdraw-form";
-import { Wallet, Clock, CheckCircle, AlertTriangle, ArrowRight } from "lucide-react";
+import { Wallet, Clock, CheckCircle, AlertTriangle, ArrowRight, Activity } from "lucide-react";
 import Link from "next/link";
+import { LiveWithdrawFeed } from "@/components/wallet/live-withdraw-feed";
 
 export default async function WithdrawPage() {
   const session = await auth();
@@ -135,6 +136,23 @@ export default async function WithdrawPage() {
           )}
         </div>
       </div>
+
+      {/* Live Withdrawal Activity */}
+      <Card>
+        <CardHeader className="pb-3">
+          <div className="flex items-center gap-2">
+            <span className="relative flex h-2.5 w-2.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
+            </span>
+            <CardTitle className="text-sm">Live Withdrawals</CardTitle>
+          </div>
+          <CardDescription>Recent payouts from SYNTHGRAPHIX users</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <LiveWithdrawFeed />
+        </CardContent>
+      </Card>
     </div>
   );
 }
