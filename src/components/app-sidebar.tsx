@@ -25,7 +25,7 @@ const accountNavItems = [
   { href: "/profile", label: "Profile", icon: User },
 ];
 
-const adminNavItem = { href: "/admin", label: "Admin Panel", icon: ShieldCheck };
+const adminNavItem = { href: "/admin/dashboard", label: "Admin Panel", icon: ShieldCheck };
 
 interface AppSidebarProps {
   isAdmin?: boolean;
