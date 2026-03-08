@@ -60,8 +60,8 @@ function NavGroup({
             className={cn(
               "relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 my-0.5",
               isActive
-                ? "bg-primary/15 text-primary nav-active-glow"
-                : "text-muted-foreground hover:bg-accent/60 hover:text-foreground"
+                ? "bg-gradient-to-r from-primary/20 to-primary/5 text-primary border border-primary/20"
+                : "text-muted-foreground hover:bg-muted/60 hover:text-foreground"
             )}
           >
             {isActive && (
