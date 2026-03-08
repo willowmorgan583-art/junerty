@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import { cn } from "@/lib/utils";
 
 const SLIDES = [
   { src: "/slide-1.jpg", alt: "SYNTHGRAPHIX Slide 1" },
@@ -46,21 +45,27 @@ export function DashboardSlider() {
         <link key={s.src} rel="preload" as="image" href={s.src} />
       ))}
       <div className="relative aspect-[16/7] sm:aspect-[16/6] w-full bg-zinc-900">
-        {SLIDES.map((slide, i) => (
-          <img
-            key={slide.src}
-            src={slide.src}
-            alt={slide.alt}
-            fetchPriority={i === 0 ? "high" : "low"}
-            decoding={i === 0 ? "sync" : "async"}
-            className={cn(
-              "absolute inset-0 h-full w-full object-cover",
-              ready ? "transition-opacity duration-700" : "",
-              !ready && i === 0 ? "opacity-100" : i === current ? "opacity-100" : "opacity-0"
-            )}
-            draggable={false}
-          />
-        ))}
+        <div
+          className="flex h-full"
+          style={{
+            width: `${SLIDES.length * 100}%`,
+            transform: `translateX(-${current * (100 / SLIDES.length)}%)`,
+            transition: ready ? "transform 0.6s ease-in-out" : "none",
+          }}
+        >
+          {SLIDES.map((slide, i) => (
+            <img
+              key={slide.src}
+              src={slide.src}
+              alt={slide.alt}
+              fetchPriority={i === 0 ? "high" : "low"}
+              decoding={i === 0 ? "sync" : "async"}
+              className="h-full object-cover"
+              style={{ width: `${100 / SLIDES.length}%` }}
+              draggable={false}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );

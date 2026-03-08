@@ -88,16 +88,6 @@ export function AppHeader() {
 
         {/* Right: action icons */}
         <div className="flex items-center gap-1">
-          {/* Mobile search */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-9 w-9 md:hidden"
-            onClick={() => setSearchOpen(true)}
-          >
-            <Search className="h-4 w-4" />
-          </Button>
-
           {/* Theme toggle */}
           <Button
             variant="ghost"

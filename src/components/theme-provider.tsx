@@ -17,9 +17,9 @@ type ThemeProviderState = {
 };
 
 const initialState: ThemeProviderState = {
-  theme: "system",
+  theme: "dark",
   setTheme: () => null,
-  resolvedTheme: "light",
+  resolvedTheme: "dark",
 };
 
 const ThemeProviderContext =
@@ -33,13 +33,19 @@ export function ThemeProvider({
 }: ThemeProviderProps) {
   const [theme, setThemeState] = React.useState<Theme>(() => {
     if (typeof window !== "undefined") {
-      return (localStorage.getItem(storageKey) as Theme) || defaultTheme;
+      const stored = localStorage.getItem(storageKey) as Theme | null;
+      return stored || defaultTheme;
     }
     return defaultTheme;
   });
 
   const [resolvedTheme, setResolvedTheme] = React.useState<"light" | "dark">(
-    "light"
+    () => {
+      if (typeof window !== "undefined") {
+        return document.documentElement.classList.contains("light") ? "light" : "dark";
+      }
+      return defaultTheme === "light" ? "light" : "dark";
+    }
   );
 
   React.useEffect(() => {

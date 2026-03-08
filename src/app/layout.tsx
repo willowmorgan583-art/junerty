@@ -14,6 +14,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('platform-theme');var d=t==='light'?'light':'dark';document.documentElement.classList.add(d)}catch(e){document.documentElement.classList.add('dark')}})()`,
+          }}
+        />
+      </head>
       <body className="font-sans antialiased">
         <Providers>{children}</Providers>
       </body>
