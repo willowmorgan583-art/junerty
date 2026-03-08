@@ -11,6 +11,7 @@ import {
   WeeklyActivityChart,
   TaskDistributionChart,
 } from "@/components/dashboard/dashboard-charts";
+import { DashboardSlider } from "@/components/dashboard/dashboard-slider";
 import { UserAvatar } from "@/components/user-avatar";
 import {
   Users,
@@ -67,6 +68,9 @@ export default async function DashboardPage() {
           </p>
         </div>
       </div>
+
+      {/* Image Slider */}
+      <DashboardSlider />
 
       {/* Top Stats Row — 4 cards */}
       <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
