@@ -39,7 +39,7 @@ function initialFeed() {
 export function LiveWithdrawFeed() {
   const [feed, setFeed] = useState(initialFeed);
   const [flash, setFlash] = useState<string | null>(null);
-  const intervalRef = useRef<ReturnType<typeof setInterval>>();
+  const intervalRef = useRef<ReturnType<typeof setInterval>>(undefined);
 
   useEffect(() => {
     intervalRef.current = setInterval(() => {
